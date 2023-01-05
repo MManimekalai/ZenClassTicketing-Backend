@@ -47,7 +47,7 @@ router.post("/", async function (req, res, next) {
           process.env.JWT_SECRET,
           { expiresIn: "24h" }
         );
-        res.json({ token: token, role:user.role,uId:user._id });
+        res.json({ token: token, role:user.role,uId:user._id,uName:user.name });
         
       } else {
         res.status(404).json({ message: "Incorrect Email/Password" });
