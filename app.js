@@ -4,7 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
-var dotenv = require("dotenv").config();
+
+const ENV = require('dotenv');
+
+ENV.config();
+require('./config');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -52,5 +56,12 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+const port = 4000;
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
 
 module.exports = app;

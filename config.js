@@ -1,21 +1,40 @@
-var mongodb = require("mongodb");
-var mongoClient = mongodb.MongoClient;
-let connection;
-let db;
+const { MongoClient } = require("mongodb");
+require('dotenv').config();
 
-//Connect DataBase
+let client = null;
+
 async function connectDb() {
-  let connection = await mongoClient.connect(process.env.DB);//mongodb://localhost:27017
-  let db = connection.db("zen_Ticketing");
-  return db;
-}
+  try {
+    if (!process.env.MONGODB_URI) {
+      throw new Error("MongoDB connection string is not defined.");
+    }
 
-async function closeConnection() {
-  if (connection) {
-    await connection.close();
-  } else {
-    console.log("No connection");
+    if (!client) {
+      client = new MongoClient(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+
+      await client.connect();
+      console.log("Connected to MongoDB");
+    }
+
+    return client.db("zen_Ticketing");
+  } catch (error) {
+    console.error("Error connecting to database:", error);
+    throw error;
   }
 }
 
-module.exports = { connectDb, connection, db, closeConnection };
+async function closeConnection() {
+  if (client) {
+    try {
+      await client.close();
+      console.log("Connection to MongoDB closed");
+    } catch (error) {
+      console.error("Error closing connection:", error);
+    }
+  }
+}
+
+module.exports = { connectDb, closeConnection };
